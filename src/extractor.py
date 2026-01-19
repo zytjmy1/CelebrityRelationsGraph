@@ -32,12 +32,19 @@ def extract_relationships(text, subject_name):
         print("Warning: OPENAI_API_KEY not found. Skipping relationship extraction.")
         return []
     
+    language = os.getenv("DEFAULT_LANGUAGE", "en")
+    language_instruction = ""
+    if language == "zh":
+        language_instruction = "IMPORTANT: Translate the 'relation' description into Chinese (Simplified)."
+    
     prompt = f"""
     You are an expert information extraction system.
     Your task is to extract relationships involving "{subject_name}" from the provided text.
     
     IMPORTANT: Focus ONLY on relationships with other FAMOUS PEOPLE, CELEBRITIES, or PUBLIC FIGURES.
     Do not include non-famous family members (unless they are also public figures), generic groups, or organizations unless highly relevant.
+    
+    {language_instruction}
     
     Return the output as a JSON list of objects, where each object has:
     - "source": The subject of the relationship (should be "{subject_name}").
