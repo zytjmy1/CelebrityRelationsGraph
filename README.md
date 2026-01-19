@@ -1,21 +1,103 @@
-🎭 Celebrity Relations Graph<p align="center"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python"><img src="https://www.google.com/search?q=https://img.shields.io/badge/LLM-GPT--4%2520|%20Qwen-orange.svg" alt="LLM"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Framework-Flask-lightgrey.svg" alt="Framework"><img src="https://www.google.com/search?q=https://img.shields.io/badge/License-MIT-green.svg" alt="License"><img src="https://www.google.com/search?q=https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome"></p><p align="center"><strong>An automated pipeline to extract and visualize social networks using LLMs and BFS.</strong></p>English | 中文文档<a name="english"></a>🌟 OverviewCelebrity Relations Graph is an intelligent OSINT tool designed to map the intricate social networks of public figures. By leveraging Large Language Models (LLM) for entity-relation extraction and Breadth-First Search (BFS) for multi-hop discovery, it transforms unstructured Wikipedia biographies into high-fidelity, interactive knowledge graphs.🚀 Key FeaturesIntelligent Extraction: Deeply parses unstructured text to identify (Subject, Predicate, Object) triplets using state-of-the-art LLMs.Visual Intimacy Engine: Edges dynamically scale in thickness (1px - 9px) based on an LLM-driven intimacy score (1-10).Dynamic Crawler: Supports multi-hop depth (Fast vs. Deep) to uncover the "Network behind the Network."Glassmorphism UI: A modern, physics-based visualization dashboard featuring real-time Server-Sent Events (SSE) log streaming.🏗️ Technical ArchitectureThe system follows a modular design pattern to ensure scalability and extraction accuracy:graph TD
+# 🎭 Celebrity Relations Graph
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/LLM-OpenAI%20|%20Qwen-orange.svg" alt="LLM">
+  <img src="https://img.shields.io/badge/Framework-Flask-lightgrey.svg" alt="Framework">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
+</p>
+
+<p align="center">
+  <strong>An automated OSINT tool to extract and visualize social networks using Large Language Models and Breadth-First Search.</strong>
+</p>
+
+---
+
+## 🌟 Overview
+
+**Celebrity Relations Graph** is an intelligent pipeline designed to map the intricate social networks of public figures. By leveraging **Large Language Models (LLM)** for entity-relation extraction and **Breadth-First Search (BFS)** for multi-hop discovery, it transforms unstructured biography text into high-fidelity, interactive knowledge graphs.
+
+This tool goes beyond simple keyword matching by using AI to understand the *nuance* and *intimacy* of relationships.
+
+## 🚀 Key Features
+
+- **🧠 Intelligent Extraction**: Deeply parses unstructured text to identify `(Subject, Relation, Object)` triplets using state-of-the-art LLMs.
+- **❤️ Intimacy Scoring**: A proprietary LLM-driven heuristic (scale 1-10) to quantify relationship closeness (e.g., Family: 10, Acquaintance: 2).
+- **🕸️ Dynamic Crawler**: Supports multi-hop depth ("Fast" vs "Deep" mode) to uncover the "Network behind the Network".
+- **🎨 Glassmorphism UI**: A modern, physics-based visualization dashboard featuring real-time log streaming.
+
+## 🆕 Recently Updated Technologies
+
+### 1. Multi-Source Search Fallback
+- **DuckDuckGo Integration**: If Wikipedia extraction fails (e.g., page not found), the system automatically falls back to a web search using `duckduckgo-search` to gather biography snippets.
+- **Robustness**: Ensures graph generation even for niche celebrities or when direct URLs fail.
+
+### 2. Intelligent Error Handling
+- **Content Filter Bypass**: Automatically detects AI content policy violations (Error 400) and switches to safer fallback data sources.
+- **User Feedback**: clearer error messages in the UI when no data is available after all attempts.
+
+### 3. Visual Intimacy Engine
+- **Thickened Connections**: Edges now dynamically scale in thickness (1px - 9px) based on the intimacy score (1-10).
+- **Physics Tuning**: Closer relationships are physically pulled tighter together in the graph layout for immediate visual hierarchy.
+
+## 🏗️ Technical Architecture
+
+The system follows a modular design pattern to ensure scalability and extraction accuracy:
+
+```mermaid
+graph TD
     A[User Input: Name] --> B[Wikipedia Scraper]
-    B --> C{Scraping Success?}
-    C -- No --> D[DuckDuckGo Search Fallback]
-    C -- Yes --> E{Extraction Mode}
-    D --> E
-    E -- Fast --> F[LLM Extraction Depth 1]
-    E -- Deep --> G[BFS Recursive Crawler Depth 2]
-    F --> H[Intimacy Scoring & Scaling Engine]
-    G --> H
-    H --> I[NetworkX Topology]
-    I --> J[Pyvis Interactive Graph]
-    J --> K[Modern Web UI]
-    style K fill:#f9f,stroke:#333,stroke-width:2px
-🔥 Recently Updated Technologies1. Multi-Source Search FallbackDuckDuckGo Integration: If Wikipedia extraction fails (e.g., page not found), the system automatically performs a web search using duckduckgo-search to gather biography snippets.Robustness: Ensures graph generation even for niche celebrities or when direct URLs fail.2. Intelligent Error HandlingContent Filter Bypass: Automatically detects AI content policy violations (Error 400) and switches to safer fallback data sources.Enhanced Feedback: Provides clear UI notifications when data is unavailable after all retrieval attempts.3. Visual Intimacy EngineThickened Connections: Edge weight is now visually represented by thickness, reflecting the strength of the relationship.Physics Tuning: Closer relationships are physically pulled tighter together in the graph layout for immediate visual hierarchy.📊 Mode ComparisonFeatureFast Mode (Depth 1)Deep Mode (Depth 2)Search ScopeTarget individual onlyTarget + Top-tier connectionsLLM WorkloadLow (~1-2 calls)High (N+1 recursive calls)DiscoveryDirect relatives & colleaguesHidden links & "Friends of friends"VisualizationStar-shaped topologyComplex social webLatencyInstant (< 10s)Sequential (30s - 2min)🔧 Getting Started1. Installationgit clone [https://github.com/your-username/celebrity-relations-graph.git](https://github.com/your-username/celebrity-relations-graph.git)
+    B --> C{Extraction Mode}
+    C -- Fast --> D[LLM Extraction Depth 1]
+    C -- Deep --> E[BFS Recursive Crawler Depth 2]
+    D --> F[Intimacy Scoring Engine]
+    E --> F
+    F --> G[NetworkX Topology]
+    G --> H[Pyvis Interactive Graph]
+    H --> I[Modern Web UI]
+    style I fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+## 🔧 Getting Started
+
+### 1. Installation
+
+```bash
+git clone https://github.com/your-username/celebrity-relations-graph.git
 cd celebrity-relations-graph
 pip install -r requirements.txt
-2. ConfigurationCreate a .env file in the root directory:OPENAI_API_KEY=your_api_key_here
-OPENAI_BASE_URL=[https://api.openai.com/v1](https://api.openai.com/v1)
-3. Executionpython src/app.py
-Visit http://localhost:8000 to start exploring.<a name="chinese"></a>🌟 项目简介Celebrity Relations Graph 是一款自动化的人际关系绘图工具。它结合了 大语言模型 (LLM) 的语义理解能力与 广度优先搜索 (BFS) 的路径发现算法，能将维基百科中杂乱的传记文本转化为高精度、可交互的社交知识图谱。🚀 核心特性智能关系提取：利用大模型深度解析非结构化文本，精准识别 (主体, 关系, 客体) 三元组。视觉亲密度引擎：线条粗细（1px - 9px）随 LLM 评分（1-10）动态变化，直观展示人脉权重。多级爬虫引擎：提供“极速”与“深度”模式，支持跨层级挖掘“朋友圈后的朋友圈”。实时处理流：基于 SSE 技术，后端提取进度毫秒级同步至前端 UI。🏗️ 技术架构Scraper 层：高效率抓取 Wikipedia 数据，并集成 DuckDuckGo 作为搜索回退方案。LLM 逻辑层：提示词工程驱动的结构化提取，支持 GPT-4、Qwen、DeepSeek 等模型。拓扑层：利用 NetworkX 进行图论计算与去重，根据评分调整物理引擎拉力。可视化层：Pyvis 驱动，配合现代 玻璃拟态 (Glassmorphism) UI。📜 开源协议本项目基于 MIT License 协议开源。<p align="center"> Designed with ❤️ for the OSINT Community </p>
+```
+
+### 2. Configuration
+
+Create a `.env` file in the root directory:
+
+```env
+OPENAI_API_KEY=your_api_key_here
+OPENAI_BASE_URL=https://api.openai.com/v1
+# Optional: Set language to 'zh' for Chinese output
+DEFAULT_LANGUAGE=en
+```
+
+### 3. Usage
+
+Start the web server:
+
+```bash
+python src/app.py
+```
+
+Visit `http://localhost:8000` to start exploring.
+
+## 📊 Search Modes
+
+| Feature | Fast Mode (Depth 1) | Deep Mode (Depth 2) |
+| :--- | :--- | :--- |
+| **Search Scope** | Target individual only | Target + Top-tier connections |
+| **LLM Workload** | Low (~1-2 calls) | High (N+1 recursive calls) |
+| **Discovery** | Direct relatives & friends | "Friends of friends" / Hidden links |
+| **Latency** | Instant (< 10s) | Sequential (30s - 2min) |
+
+---
+
+<p align="center"> Designed with ❤️ for the OSINT Community </p>
