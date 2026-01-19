@@ -5,3 +5,4 @@ networkx
 pyvis
 python-dotenv
 flask
+duckduckgo-search

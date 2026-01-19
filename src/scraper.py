@@ -22,27 +22,49 @@ def get_celebrity_info(name):
     
     try:
         response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        # Extract the main content
-        content_div = soup.find(id="mw-content-text")
-        
-        if not content_div:
-            return None
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+            content_div = soup.find(id="mw-content-text")
             
-        # Extract paragraphs
-        paragraphs = content_div.find_all('p')
-        text_content = ""
+            if content_div:
+                paragraphs = content_div.find_all('p')
+                text_content = ""
+                for p in paragraphs:
+                    text_content += p.get_text() + "\n"
+                return clean_text(text_content)
         
-        for p in paragraphs:
-            text_content += p.get_text() + "\n"
-            
-        return clean_text(text_content)
-        
+        # Fallback: DuckDuckGo Search
+        print(f"Wikipedia page not found for {name}. Trying Fallback Search...")
+        return search_fallback(name)
+
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data for {name}: {e}")
+        return search_fallback(name)
+
+def search_fallback(name):
+    """
+    Uses DuckDuckGo to find information if Wikipedia fails.
+    """
+    try:
+        from duckduckgo_search import DDGS
+        
+        query = f"{name} celebrity relationships biography"
+        results = DDGS().text(query, max_results=3)
+        
+        if not results:
+            return None
+            
+        combined_text = ""
+        for result in results:
+            combined_text += f"{result['title']}\n{result['body']}\n\n"
+            
+        return f"[FALLBACK SEARCH RESULT]\n{combined_text}"
+        
+    except ImportError:
+        print("duckduckgo-search not installed. Skipping fallback.")
+        return None
+    except Exception as e:
+        print(f"Fallback search error: {e}")
         return None
 
 def clean_text(text):

@@ -50,6 +50,7 @@ def extract_relationships(text, subject_name):
     - "source": The subject of the relationship (should be "{subject_name}").
     - "target": The object of the relationship (must be a specific famous person or public figure).
     - "relation": A concise description of the relationship (e.g., "dated", "collaborated with", "rival").
+    - "intimacy": An integer score from 1 to 10 indicating the closeness of the relationship (10 = extremely close/family/spouse, 1 = distant/acquaintance).
     
     Limit to the most important 20 relationships.
     
@@ -88,12 +89,20 @@ def extract_relationships(text, subject_name):
             source = item.get("source")
             target = item.get("target")
             relation = item.get("relation")
+            intimacy = item.get("intimacy", 5) # Default to 5 if not provided
+            
             if source and target and relation:
-                relationships.append((source, target, relation))
+                relationships.append((source, target, relation, intimacy))
                 
         return relationships
 
     except Exception as e:
+        # Check for data inspection failed (Aliyun/Content Filter)
+        error_str = str(e)
+        if "data_inspection_failed" in error_str or "400" in error_str:
+            print(f"Content Filter Error: {e}")
+            raise ValueError("Content Blocked") # Raise specific error for app.py to handle
+            
         print(f"Error extracting relationships: {e}")
         return []
 

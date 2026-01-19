@@ -14,10 +14,34 @@ def create_graph(relationships):
     """
     G = nx.Graph()
     
-    for source, target, relation in relationships:
-        G.add_node(source, title=source, group=1)
-        G.add_node(target, title=target, group=2)
-        G.add_edge(source, target, title=relation, label=relation)
+    # Calculate node sizes based on max intimacy
+    node_sizes = {}
+    
+    for source, target, relation, intimacy in relationships:
+        # Default size for source if not set (will be overwritten if it's a target elsewhere with higher intimacy)
+        if source not in node_sizes:
+            node_sizes[source] = 25 # Base size
+            
+        # Target size based on intimacy
+        # Formula: Base (10) + Intimacy * 3. Range: 13 (Intimacy 1) to 40 (Intimacy 10)
+        target_size = 10 + (intimacy * 3)
+        if target not in node_sizes or target_size > node_sizes[target]:
+            node_sizes[target] = target_size
+
+    for source, target, relation, intimacy in relationships:
+        # Add nodes with calculated sizes
+        G.add_node(source, title=source, group=1, size=node_sizes[source])
+        G.add_node(target, title=target, group=2, size=node_sizes[target])
+        
+        # Calculate visual properties based on intimacy (1-10)
+        # Higher intimacy = shorter length, thicker line
+        # element: Length: 10 -> 50, 1 -> 300 (Previous)
+        # Tighter clustering: 10 -> 30, 1 -> 200
+        edge_length = (11 - intimacy) * 20
+        # Thicker edges: 1 -> ~1.8, 10 -> ~9
+        edge_width = 1 + (intimacy * 0.8)
+        
+        G.add_edge(source, target, title=f"{relation} (Intimacy: {intimacy})", label=relation, length=edge_length, width=edge_width)
         
     return G
 
@@ -118,10 +142,10 @@ def visualize_graph(G, output_file="graph.html"):
 if __name__ == "__main__":
     # Test with dummy data
     rels = [
-        ("Taylor Swift", "Travis Kelce", "dating"),
-        ("Taylor Swift", "Scott Swift", "father"),
-        ("Taylor Swift", "Andrea Swift", "mother"),
-        ("Travis Kelce", "Jason Kelce", "brother")
+        ("Taylor Swift", "Travis Kelce", "dating", 10),
+        ("Taylor Swift", "Scott Swift", "father", 10),
+        ("Taylor Swift", "Andrea Swift", "mother", 10),
+        ("Travis Kelce", "Jason Kelce", "brother", 9)
     ]
     G = create_graph(rels)
     visualize_graph(G, "output/test_graph.html")

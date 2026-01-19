@@ -7,159 +7,321 @@
     <title>Celebrity Relations Graph</title>
     <style>
         :root {
-            --bg-color: #1a1a1a;
-            --text-color: #f0f0f0;
-            --accent-color: #64b5f6;
-            --input-bg: #333;
-            --container-bg: #222;
+            --bg-color: #000000;
+            --surface-color: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent-color: #2997ff;
+            --border-color: #424245;
+            --glass-bg: rgba(29, 29, 31, 0.72);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-primary);
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         header {
-            padding: 20px;
-            background-color: var(--container-bg);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            justify-content: space-between;
         }
 
         h1 {
             margin: 0;
-            font-weight: 300;
-            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: 20px;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
         }
 
-        .search-container {
+        .search-area {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 4px;
+            background: var(--surface-color);
+            padding: 3px;
+            border-radius: 8px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .radio-option label {
+            display: block;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .radio-option input:checked~label {
+            background-color: #636366;
+            color: white;
+        }
+
+        .input-group {
+            position: relative;
         }
 
         input[type="text"] {
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 1px solid #444;
-            background-color: var(--input-bg);
-            color: white;
-            font-size: 16px;
-            width: 300px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 280px;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         input[type="text"]:focus {
+            background-color: #2c2c2e;
             border-color: var(--accent-color);
-            box-shadow: 0 0 5px rgba(100, 181, 246, 0.3);
+            box-shadow: 0 0 0 4px rgba(41, 151, 255, 0.15);
         }
 
-        button {
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+        }
+
+        button.primary-btn {
             padding: 10px 20px;
             border-radius: 20px;
             border: none;
             background-color: var(--accent-color);
-            color: var(--bg-color);
-            font-weight: bold;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
         }
 
-        button:hover {
-            background-color: #90caf9;
+        button.primary-btn:hover {
+            background-color: #0077ed;
+            transform: scale(1.02);
         }
 
-        button:disabled {
-            background-color: #555;
+        button.primary-btn:active {
+            transform: scale(0.98);
+        }
+
+        button.primary-btn:disabled {
+            background-color: #3a3a3c;
+            color: #636366;
             cursor: not-allowed;
+            transform: none;
         }
 
         #graph-container {
+            margin-top: 80px;
+            /* Adjust for fixed header */
             flex-grow: 1;
             position: relative;
-            background-color: #000;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        iframe.loaded {
+            opacity: 1;
         }
 
         .placeholder {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             text-align: center;
-            color: #666;
+            color: var(--text-secondary);
+            z-index: 10;
+        }
+
+        .placeholder h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .placeholder p {
+            font-size: 16px;
+            margin: 0;
         }
 
         .loader {
-            border: 4px solid #333;
-            border-top: 4px solid var(--accent-color);
-            border-radius: 50%;
             width: 40px;
             height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 24px;
             display: none;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
+            to {
                 transform: rotate(360deg);
             }
         }
 
-        .error-message {
-            color: #ff5252;
-            margin-top: 10px;
+        .log-console {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 700px;
+            background: rgba(29, 29, 31, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            color: #00ff41;
+            /* Classic terminal green */
+            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            height: 160px;
+            overflow-y: auto;
             display: none;
+            z-index: 50;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Scrollbar styling for log console */
+        .log-console::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .log-console::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .log-console::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .log-entry {
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(2px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-state {
+            color: #ff453a;
         }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Celebrity Relations Graph</h1>
-        <div class="search-container">
-            <input type="text" id="celebrity-name" placeholder="Enter celebrity name (e.g. Taylor Swift)"
-                onkeypress="handleKeyPress(event)">
-            <button onclick="generateGraph()" id="generate-btn">Generate</button>
+        <div class="header-content">
+            <h1>Celebrity Relations Graph</h1>
+            <div class="search-area">
+                <div class="controls">
+                    <div class="radio-option">
+                        <input type="radio" id="mode-fast" name="mode" value="fast" checked>
+                        <label for="mode-fast">Fast</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="mode-deep" name="mode" value="deep">
+                        <label for="mode-deep">Deep</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="celebrity-name" placeholder="Search celebrity..."
+                        onkeypress="handleKeyPress(event)">
+                </div>
+                <button onclick="generateGraph()" id="generate-btn" class="primary-btn">Generate</button>
+            </div>
         </div>
     </header>
 
     <div id="graph-container">
         <div class="placeholder" id="placeholder">
             <div class="loader" id="loader"></div>
-            <p id="status-text">Enter a name to explore relationships</p>
-            <p class="error-message" id="error-message"></p>
+            <h2 id="status-title">Ready when you are</h2>
+            <p id="status-desc" style="color: var(--text-secondary);">Enter a celebrity name to discover their network.
+            </p>
         </div>
         <iframe id="graph-frame" src=""></iframe>
+        <div class="log-console" id="log-console"></div>
     </div>
 
     <script>
         const input = document.getElementById('celebrity-name');
         const btn = document.getElementById('generate-btn');
         const loader = document.getElementById('loader');
-        const statusText = document.getElementById('status-text');
-        const errorMsg = document.getElementById('error-message');
+        const statusTitle = document.getElementById('status-title');
+        const statusDesc = document.getElementById('status-desc');
         const iframe = document.getElementById('graph-frame');
         const placeholder = document.getElementById('placeholder');
+        const logConsole = document.getElementById('log-console');
 
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
@@ -167,58 +329,109 @@
             }
         }
 
+        function appendLog(message) {
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            div.innerText = `[${time}] ${message}`;
+            logConsole.appendChild(div);
+            // Auto scroll to bottom
+            logConsole.scrollTop = logConsole.scrollHeight;
+        }
+
         async function generateGraph() {
             const name = input.value.trim();
             if (!name) return;
 
-            // Reset UI
-            iframe.src = "";
-            iframe.style.display = 'none';
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+
+            // Reset UI State
+            iframe.classList.remove('loaded');
+            setTimeout(() => { iframe.style.display = 'none'; iframe.src = ""; }, 300);
+
             placeholder.style.display = 'block';
             loader.style.display = 'block';
-            errorMsg.style.display = 'none';
-            statusText.innerText = `Analyzing info for ${name}...`;
+            statusTitle.innerText = "Processing...";
+            statusDesc.innerText = `Analyzing network for ${name} (${mode} mode)`;
+            statusDesc.style.color = "var(--text-secondary)";
+
+            // Show Logs
+            logConsole.style.display = 'block';
+            logConsole.innerHTML = '';
+            appendLog(`System initializing... Mode: ${mode.toUpperCase()}`);
+            appendLog(`Target: ${name}`);
+
             btn.disabled = true;
 
             try {
                 const response = await fetch('/generate', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name: name })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, mode: mode })
                 });
 
-                const text = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    console.error("Failed to parse JSON:", text);
-                    // Check if it's an HTML error page (common with 403/500)
-                    if (text.includes("<!DOCTYPE html>")) {
-                        // Try to extract title or reason
-                        const match = text.match(/<title>(.*?)<\/title>/);
-                        const reason = match ? match[1] : "Server returned HTML error page";
-                        throw new Error(`Server Error (${response.status}): ${reason}`);
+                if (!response.ok) {
+                    let errorText = await response.text();
+                    try {
+                        const errJson = JSON.parse(errorText);
+                        throw new Error(errJson.message || errJson.error || `Server Error: ${response.status}`);
+                    } catch (e) {
+                        throw new Error(`Server Error (${response.status}): ${errorText.substring(0, 50)}...`);
                     }
-                    throw new Error(`Invalid server response (Status: ${response.status}). Check console for details.`);
                 }
 
-                if (response.ok) {
-                    statusText.innerText = "";
-                    loader.style.display = 'none';
-                    placeholder.style.display = 'none';
-                    iframe.src = data.graph_url;
-                    iframe.style.display = 'block';
-                } else {
-                    throw new Error(data.error || 'Unknown error occurred');
+                // Stream handling
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (!line.trim()) continue;
+                        try {
+                            const msg = JSON.parse(line);
+                            if (msg.type === 'log') {
+                                appendLog(msg.message);
+                                statusDesc.innerText = msg.message;
+                            } else if (msg.type === 'result') {
+                                // Success
+                                statusTitle.innerText = "Completed";
+                                statusDesc.innerText = "Rendering graph...";
+                                loader.style.display = 'none';
+
+                                // Hide placeholder and logs after a moment to show graph
+                                setTimeout(() => {
+                                    placeholder.style.display = 'none';
+                                    logConsole.style.display = 'none';
+                                    iframe.style.display = 'block';
+                                    iframe.src = msg.graph_url;
+                                    // Fade in
+                                    iframe.onload = () => iframe.classList.add('loaded');
+                                }, 1000);
+                                return;
+                            } else if (msg.type === 'error') {
+                                throw new Error(msg.message);
+                            }
+                        } catch (e) {
+                            console.error("Parse error:", e);
+                        }
+                    }
                 }
+
             } catch (error) {
                 loader.style.display = 'none';
-                statusText.innerText = "";
-                errorMsg.innerText = error.message;
-                errorMsg.style.display = 'block';
+                statusTitle.innerText = "Error";
+                statusTitle.classList.add('error-state');
+                statusDesc.innerText = error.message;
+                statusDesc.classList.add('error-state');
+                appendLog(`CRITICAL ERROR: ${error.message}`);
             } finally {
                 btn.disabled = false;
             }
