@@ -1,4 +1,4 @@
-# 🎭 Celebrity Relations Graph
+# 🎭 名人关系图谱｜Celebrity Relations Graph
 
 <p align="center">
   <a href="#简体中文">简体中文</a> | <a href="#english">English</a>
