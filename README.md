@@ -73,8 +73,8 @@ graph TD
 ### 1. 安装 | Installation
 
 ```bash
-git clone [https://github.com/your-username/celebrity-relations-graph.git](https://github.com/your-username/celebrity-relations-graph.git)
-cd celebrity-relations-graph
+git clone https://github.com/zytjmy1/CelebrityRelationsGraph.git
+cd CelebrityRelationsGraph
 pip install -r requirements.txt
 ```
 
