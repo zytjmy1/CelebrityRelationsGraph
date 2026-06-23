@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python">
-  <img src="https://img.shields.io/badge/LLM-DeepSeek%20V4%20Pro-orange.svg" alt="LLM">
+  <img src="https://img.shields.io/badge/LLM-DeepSeek%20V4%20Flash-orange.svg" alt="LLM">
   <img src="https://img.shields.io/badge/Framework-Flask-lightgrey.svg" alt="Framework">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 </p>
@@ -24,6 +24,14 @@
 **Celebrity Relations Graph** 是一个智能管道，旨在绘制公众人物复杂的社交网络。通过利用 **大语言模型 (LLM)** 进行实体关系提取，并结合 **广度优先搜索 (BFS)** 进行多跳发现，它将非结构化的传记文本转化为高保真、交互式的知识图谱。
 
 该工具超越了简单的关键词匹配，利用 AI 理解人际关系的细微差别和亲密程度。
+
+### 🖼️ 界面预览
+
+| 搜索主页 | 关系图谱 |
+| :---: | :---: |
+| ![搜索主页](docs/images/search-home.png) | ![关系图谱](docs/images/relationship-graph.png) |
+
+支持中文/English 界面切换、快速与深度搜索、本地搜索历史，以及交互式关系图浏览。
 
 ### 🚀 核心特性
 
@@ -69,7 +77,7 @@ pip install -r requirements.txt
 ```env
 OPENAI_API_KEY=your_api_key_here
 OPENAI_BASE_URL=https://api.deepseek.com/v1
-OPENAI_MODEL_NAME=deepseek-v4-pro
+OPENAI_MODEL_NAME=deepseek-v4-flash
 DEFAULT_LANGUAGE=zh
 ```
 
@@ -91,6 +99,14 @@ python src/app.py
 ### 🌟 Overview
 
 **Celebrity Relations Graph** is an intelligent pipeline designed to map the intricate social networks of public figures. By leveraging **Large Language Models (LLM)** for entity-relation extraction and **Breadth-First Search (BFS)** for multi-hop discovery, it transforms unstructured biography text into high-fidelity, interactive knowledge graphs.
+
+### 🖼️ Interface Preview
+
+| Search home | Relationship graph |
+| :---: | :---: |
+| ![Search home](docs/images/search-home.png) | ![Relationship graph](docs/images/relationship-graph.png) |
+
+The interface supports Chinese/English switching, Fast and Deep search, browser-local search history, and interactive graph navigation.
 
 ### 🚀 Key Features
 
@@ -136,7 +152,7 @@ Create a `.env` file:
 ```env
 OPENAI_API_KEY=your_api_key_here
 OPENAI_BASE_URL=https://api.deepseek.com/v1
-OPENAI_MODEL_NAME=deepseek-v4-pro
+OPENAI_MODEL_NAME=deepseek-v4-flash
 DEFAULT_LANGUAGE=en
 ```
 

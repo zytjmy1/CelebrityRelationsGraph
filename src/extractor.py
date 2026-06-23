@@ -62,14 +62,14 @@ def normalize_relationships(items: Iterable[dict], subject_name: str) -> list[tu
     return sorted(unique.values(), key=lambda value: (-value[3], value[1].casefold()))[:20]
 
 
-def extract_relationships(text: str, subject_name: str) -> list[tuple[str, str, str, int]]:
+def extract_relationships(text: str, subject_name: str, language: str | None = None) -> list[tuple[str, str, str, int]]:
     """Extract only relationships that are directly supported by retrieved source text."""
     client = get_client()
     if not client:
         print("Warning: OPENAI_API_KEY not found. Skipping relationship extraction.")
         return []
 
-    language = os.getenv("DEFAULT_LANGUAGE", "en")
+    language = language or os.getenv("DEFAULT_LANGUAGE", "en")
     language_instruction = "Write relation labels in Simplified Chinese." if language == "zh" else "Write relation labels in English."
     subject = _display_name(subject_name)
     prompt = f"""

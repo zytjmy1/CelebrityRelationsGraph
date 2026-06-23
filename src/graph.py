@@ -48,7 +48,14 @@ def create_graph(relationships, root_name=None):
 
 
 def visualize_graph(graph, output_file="graph.html"):
-    net = Network(notebook=False, height="100vh", width="100%", bgcolor="#07111f", font_color="#dbeafe")
+    net = Network(
+        notebook=False,
+        height="100vh",
+        width="100%",
+        bgcolor="#07111f",
+        font_color="#dbeafe",
+        cdn_resources="remote",
+    )
     net.from_nx(graph)
     net.set_options("""
     var options = {

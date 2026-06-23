@@ -18,6 +18,8 @@
     .brand small { display:block; margin-top:2px; color:var(--muted); font-size:11px; font-weight:500; letter-spacing:.08em; }
     .legend { display:flex; gap:18px; color:var(--muted); font-size:12px; }
     .legend span { display:flex; align-items:center; gap:7px; } .legend i { width:8px; height:8px; border-radius:50%; } .legend .core { background:var(--gold); } .legend .person { background:#60a5fa; }
+    .header-actions { display:flex; align-items:center; gap:12px; } .language-switcher { display:flex; padding:3px; border:1px solid var(--line); border-radius:10px; background:rgba(15,35,60,.45); } .language-button { min-width:35px; padding:5px 7px; border:0; border-radius:7px; color:#8ea1be; background:transparent; font-size:12px; font-weight:700; cursor:pointer; } .language-button[aria-pressed="true"] { color:#061d1a; background:var(--accent); }
+    .back-button { display:none; align-items:center; gap:7px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; color:#dbeafe; background:rgba(15,35,60,.55); font-size:13px; cursor:pointer; transition:border-color .16s,background .16s; } .back-button:hover { border-color:rgba(97,213,186,.55); background:rgba(24,55,78,.76); } .back-button.visible { display:flex; }
     main { position:relative; min-height:0; }
     #graph-frame { width:100%; height:100%; display:none; border:0; opacity:0; transition:opacity .45s ease; } #graph-frame.loaded { opacity:1; }
     .home { position:absolute; inset:0; display:grid; place-items:center; padding:30px; overflow:auto; }
@@ -32,71 +34,96 @@
     .mode-group { display:flex; gap:7px; } .mode input { position:absolute; opacity:0; pointer-events:none; } .mode label { display:block; padding:8px 12px; border:1px solid transparent; border-radius:9px; color:var(--muted); font-size:13px; cursor:pointer; } .mode input:checked + label { border-color:rgba(97,213,186,.31); color:#d7fff5; background:rgba(97,213,186,.12); }
     .mode-hint { color:#71829e; font-size:12px; }
     .examples { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:25px; color:var(--muted); font-size:12px; } .example { padding:6px 10px; border:1px solid var(--line); border-radius:999px; color:#bfcee5; background:transparent; cursor:pointer; transition:border-color .15s,color .15s; } .example:hover { border-color:var(--accent); color:#e9fffa; }
+    .history { margin-top:22px; padding-top:18px; border-top:1px solid var(--line); } .history[hidden] { display:none; } .history-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:#92a5c3; font-size:12px; } .clear-history { padding:0; border:0; color:#7d93b4; background:transparent; font-size:12px; cursor:pointer; } .clear-history:hover { color:#dce9fb; } .history-list { display:flex; flex-wrap:wrap; gap:8px; } .history-item { display:flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--line); border-radius:10px; color:#d5e2f4; background:rgba(5,16,30,.35); font-size:13px; cursor:pointer; } .history-item:hover { border-color:rgba(97,213,186,.55); } .history-item small { color:#7185a3; font-size:10px; }
     .progress { position:absolute; z-index:3; right:clamp(16px,3vw,38px); bottom:clamp(16px,3vw,38px); width:min(390px,calc(100% - 32px)); padding:17px; border:1px solid var(--line); border-radius:16px; background:rgba(7,18,33,.84); backdrop-filter:blur(16px); display:none; box-shadow:0 18px 50px rgba(0,0,0,.28); }
     .progress-top { display:flex; justify-content:space-between; gap:10px; align-items:center; } .progress h2 { margin:0; font-size:14px; } .pulse { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 0 rgba(97,213,186,.45); animation:pulse 1.5s infinite; } @keyframes pulse { 70% { box-shadow:0 0 0 8px rgba(97,213,186,0); } 100% { box-shadow:0 0 0 0 rgba(97,213,186,0); } }
     #status { margin:8px 0 11px; color:#b9c8de; font-size:12px; line-height:1.45; } #log { max-height:94px; overflow:auto; color:#6f819e; font:11px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace; } #log div:last-child { color:#cbd9ed; }
     .summary { position:absolute; z-index:2; top:22px; left:clamp(16px,3vw,38px); display:none; padding:10px 13px; border:1px solid var(--line); border-radius:12px; color:#afc0d8; background:rgba(7,18,33,.82); backdrop-filter:blur(12px); font-size:12px; } .summary strong { color:#f8fafc; } .summary .dot { color:var(--accent); padding:0 6px; }
     .error { color:var(--danger)!important; } .error .pulse { background:var(--danger); animation:none; }
-    @media (max-width:650px) { header { padding:14px 18px; } .legend { display:none; } .home { padding:16px; align-items:start; } .home-content { margin-top:24px; padding:29px 22px; border-radius:22px; } .search-row { flex-direction:column; } .primary { min-height:48px; } .options { align-items:flex-start; flex-direction:column; } .progress { bottom:16px; } }
+    @media (max-width:650px) { header { padding:14px 18px; } .legend { display:none; } .header-actions { gap:7px; } .back-button { font-size:12px; } .home { padding:16px; align-items:start; } .home-content { margin-top:24px; padding:29px 22px; border-radius:22px; } .search-row { flex-direction:column; } .primary { min-height:48px; } .options { align-items:flex-start; flex-direction:column; } .progress { bottom:16px; } }
   </style>
 </head>
 <body>
   <div class="app">
     <header>
-      <div class="brand"><span class="brand-mark">✦</span><span>名人关系图谱<small>CELEBRITY RELATION MAP</small></span></div>
-      <div class="legend"><span><i class="core"></i>核心人物</span><span><i class="person"></i>关联人物</span></div>
+      <div class="brand"><span class="brand-mark">✦</span><span><span id="brand-text">名人关系图谱</span><small>CELEBRITY RELATION MAP</small></span></div>
+      <div class="legend"><span><i class="core"></i><span data-i18n="core">核心人物</span></span><span><i class="person"></i><span data-i18n="related">关联人物</span></span></div>
+      <div class="header-actions"><div class="language-switcher" role="group" aria-label="Language"><button class="language-button" type="button" data-language="zh" aria-pressed="true">中</button><button class="language-button" type="button" data-language="en" aria-pressed="false">EN</button></div><button class="back-button" id="back-btn" type="button" aria-label="返回搜索主页" data-i18n="back">← 返回搜索</button></div>
     </header>
     <main>
       <iframe id="graph-frame" title="人物关系图"></iframe>
       <div class="summary" id="summary"></div>
       <section class="home" id="home">
         <div class="home-content">
-          <p class="eyebrow">Public profile explorer</p>
-          <h1>把人物故事，<br>变成一张<em>关系地图</em>。</h1>
-          <p class="intro">从公开人物资料中提取可验证的家庭、合作与职业关系。快速模式适合单一人物，深度模式会进一步探索关键关联人物。</p>
+          <p class="eyebrow" data-i18n="eyebrow">Public profile explorer</p>
+          <h1><span data-i18n="heroStart">把人物故事，</span><br id="hero-break"><span data-i18n="heroMiddle">变成一张</span><em data-i18n="heroAccent">关系地图</em><span data-i18n="heroEnd">。</span></h1>
+          <p class="intro" data-i18n="intro">从公开人物资料中提取可验证的家庭、合作与职业关系。快速模式适合单一人物，深度模式会进一步探索关键关联人物。</p>
           <div class="search-card">
             <div class="search-row">
-              <input type="text" id="celebrity-name" aria-label="人物姓名" autocomplete="off" placeholder="输入人物姓名，例如：周杰伦">
-              <button class="primary" id="generate-btn" type="button">开始探索</button>
+              <input type="text" id="celebrity-name" aria-label="人物姓名" autocomplete="off" placeholder="输入人物姓名，例如：周杰伦" data-i18n-placeholder="placeholder">
+              <button class="primary" id="generate-btn" type="button" data-i18n="start">开始探索</button>
             </div>
           </div>
           <div class="options">
             <div class="mode-group" role="radiogroup" aria-label="搜索范围">
-              <div class="mode"><input type="radio" id="mode-fast" name="mode" value="fast" checked><label for="mode-fast">快速 · 单层</label></div>
-              <div class="mode"><input type="radio" id="mode-deep" name="mode" value="deep"><label for="mode-deep">深度 · 两层</label></div>
+              <div class="mode"><input type="radio" id="mode-fast" name="mode" value="fast" checked><label for="mode-fast" data-i18n="fast">快速 · 单层</label></div>
+              <div class="mode"><input type="radio" id="mode-deep" name="mode" value="deep"><label for="mode-deep" data-i18n="deep">深度 · 两层</label></div>
             </div>
             <span class="mode-hint" id="mode-hint">更快，适合先了解一个人</span>
           </div>
-          <div class="examples"><span>试试</span><button class="example" type="button" data-name="周杰伦">周杰伦</button><button class="example" type="button" data-name="Taylor Swift">Taylor Swift</button><button class="example" type="button" data-name="Elon Musk">Elon Musk</button></div>
+          <div class="examples"><span data-i18n="try">试试</span><button class="example" type="button" data-name="周杰伦">周杰伦</button><button class="example" type="button" data-name="Taylor Swift">Taylor Swift</button><button class="example" type="button" data-name="Elon Musk">Elon Musk</button></div>
+          <section class="history" id="history" hidden aria-label="最近搜索">
+            <div class="history-title"><span data-i18n="history">最近搜索（仅保存在此浏览器）</span><button class="clear-history" id="clear-history" type="button" data-i18n="clear">清空</button></div>
+            <div class="history-list" id="history-list"></div>
+          </section>
         </div>
       </section>
       <aside class="progress" id="progress" aria-live="polite"><div class="progress-top"><h2 id="progress-title">正在构建关系图</h2><span class="pulse"></span></div><p id="status">准备开始…</p><div id="log"></div></aside>
     </main>
   </div>
   <script>
-    const input = document.getElementById('celebrity-name'), button = document.getElementById('generate-btn'), home = document.getElementById('home'), frame = document.getElementById('graph-frame'), progress = document.getElementById('progress'), status = document.getElementById('status'), log = document.getElementById('log'), summary = document.getElementById('summary'), progressTitle = document.getElementById('progress-title'), modeHint = document.getElementById('mode-hint');
+    const input = document.getElementById('celebrity-name'), button = document.getElementById('generate-btn'), home = document.getElementById('home'), frame = document.getElementById('graph-frame'), progress = document.getElementById('progress'), status = document.getElementById('status'), log = document.getElementById('log'), summary = document.getElementById('summary'), progressTitle = document.getElementById('progress-title'), modeHint = document.getElementById('mode-hint'), backButton = document.getElementById('back-btn'), history = document.getElementById('history'), historyList = document.getElementById('history-list'), clearHistoryButton = document.getElementById('clear-history'), brandText = document.getElementById('brand-text');
     const modes = document.querySelectorAll('input[name="mode"]');
+    const HISTORY_KEY = 'celebrity-graph.search-history.v1', LANGUAGE_KEY = 'celebrity-graph.language.v1', GRAPH_DB_NAME = 'celebrity-graph-cache-v1', GRAPH_STORE_NAME = 'graphs', HISTORY_LIMIT = 8;
+    const copy = { zh: { brand:'名人关系图谱', core:'核心人物', related:'关联人物', back:'← 返回搜索', eyebrow:'PUBLIC PROFILE EXPLORER', heroStart:'把人物故事，', heroMiddle:'变成一张', heroAccent:'关系地图', heroEnd:'。', intro:'从公开人物资料中提取可验证的家庭、合作与职业关系。快速模式适合单一人物，深度模式会进一步探索关键关联人物。', placeholder:'输入人物姓名，例如：周杰伦', start:'开始探索', searching:'探索中…', fast:'快速 · 单层', deep:'深度 · 两层', fastHint:'更快，适合先了解一个人', deepHint:'扩展关键人物，耗时会更长', try:'试试', history:'最近搜索（仅保存在此浏览器）', clear:'清空', fastShort:'快速', deepShort:'深度', cached:'已缓存', restoring:'正在打开已保存的图谱…', cacheUnavailable:'本地缓存不可用，已打开服务器保存的图谱。', preparing:'准备检索 {name}…', waitEstimate:'预计等待约 {seconds} 秒，请保持页面开启。', building:'正在构建关系图', failed:'这次没有完成', unavailable:'服务暂时无法响应。', unknown:'出现未知错误。', people:'人', relations:'条关系' }, en: { brand:'Celebrity Relation Map', core:'Focal person', related:'Connected person', back:'← Back to search', eyebrow:'PUBLIC PROFILE EXPLORER', heroStart:"Turn a person's story", heroMiddle:'into a ', heroAccent:'relationship map', heroEnd:'.', intro:'Extract verifiable family, collaboration, and professional connections from public profiles. Fast mode explores one person; Deep mode follows key related people.', placeholder:'Enter a name, e.g. Taylor Swift', start:'Explore', searching:'Exploring…', fast:'Fast · one hop', deep:'Deep · two hops', fastHint:'Faster for exploring one person', deepHint:'Follows key connections and takes longer', try:'Try', history:'Recent searches (stored in this browser only)', clear:'Clear', fastShort:'Fast', deepShort:'Deep', cached:'Saved', restoring:'Opening saved graph…', cacheUnavailable:'Local cache unavailable; opened the server-saved graph instead.', preparing:'Preparing to search {name}…', waitEstimate:'Estimated wait: about {seconds} seconds. Please keep this page open.', building:'Building relationship graph', failed:"This search didn't complete", unavailable:'The service is temporarily unavailable.', unknown:'An unexpected error occurred.', people:'people', relations:'relationships' } };
+    let language = (() => { try { return localStorage.getItem(LANGUAGE_KEY) === 'en' ? 'en' : 'zh'; } catch (_) { return 'zh'; } })();
+    function t(key, values = {}) { return Object.entries(values).reduce((text, [name, value]) => text.replace(`{${name}}`, value), copy[language][key] || key); }
+    function applyLanguage(nextLanguage, persist = true) { language = nextLanguage === 'en' ? 'en' : 'zh'; if (persist) { try { localStorage.setItem(LANGUAGE_KEY, language); } catch (_) {} } document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en'; brandText.textContent = t('brand'); document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = t(element.dataset.i18n); }); document.querySelectorAll('[data-i18n-placeholder]').forEach(element => { element.placeholder = t(element.dataset.i18nPlaceholder); }); document.getElementById('hero-break').hidden = language === 'en'; input.setAttribute('aria-label', language === 'zh' ? '人物姓名' : 'Person name'); document.querySelector('.mode-group').setAttribute('aria-label', language === 'zh' ? '搜索范围' : 'Search scope'); backButton.setAttribute('aria-label', language === 'zh' ? '返回搜索主页' : 'Back to search page'); history.setAttribute('aria-label', language === 'zh' ? '最近搜索' : 'Recent searches'); document.querySelectorAll('.language-button').forEach(item => item.setAttribute('aria-pressed', String(item.dataset.language === language))); updateModeHint(); if (!button.disabled) button.textContent = t('start'); renderHistory(); }
     function activeMode() { return document.querySelector('input[name="mode"]:checked').value; }
-    function addLog(message) { const item = document.createElement('div'); item.textContent = `${new Date().toLocaleTimeString('zh-CN', {hour12:false})}  ${message}`; log.appendChild(item); log.scrollTop = log.scrollHeight; }
+    function updateModeHint() { modeHint.textContent = activeMode() === 'deep' ? t('deepHint') : t('fastHint'); }
+    function setMode(mode) { const control = document.querySelector(`input[name="mode"][value="${mode}"]`); if (control) { control.checked = true; updateModeHint(); } }
+    function getHistory() { try { const items = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); return Array.isArray(items) ? items.filter(item => item && typeof item.name === 'string') : []; } catch (_) { return []; } }
+    function openGraphDb() { return new Promise((resolve, reject) => { const request = indexedDB.open(GRAPH_DB_NAME, 1); request.onupgradeneeded = () => request.result.createObjectStore(GRAPH_STORE_NAME, {keyPath:'id'}); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); }
+    async function cacheGraph(record) { const response = await fetch(record.graphUrl); if (!response.ok) throw new Error('graph fetch failed'); const db = await openGraphDb(); const html = await response.text(); await new Promise((resolve, reject) => { const request = db.transaction(GRAPH_STORE_NAME, 'readwrite').objectStore(GRAPH_STORE_NAME).put({id:record.graphId, html}); request.onsuccess = resolve; request.onerror = () => reject(request.error); }); db.close(); }
+    async function readCachedGraph(id) { const db = await openGraphDb(); const value = await new Promise((resolve, reject) => { const request = db.transaction(GRAPH_STORE_NAME).objectStore(GRAPH_STORE_NAME).get(id); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); db.close(); return value; }
+    async function clearCachedGraphs() { const db = await openGraphDb(); await new Promise((resolve, reject) => { const request = db.transaction(GRAPH_STORE_NAME, 'readwrite').objectStore(GRAPH_STORE_NAME).clear(); request.onsuccess = resolve; request.onerror = () => reject(request.error); }); db.close(); }
+    function graphId() { return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`; }
+    function renderHistory() { const items = getHistory(); history.hidden = !items.length; historyList.replaceChildren(); items.forEach(item => { const entry = document.createElement('button'); entry.type = 'button'; entry.className = 'history-item'; entry.textContent = item.name; const mode = document.createElement('small'); mode.textContent = item.mode === 'deep' ? t('deepShort') : t('fastShort'); entry.appendChild(mode); if (item.graphId) { const cached = document.createElement('small'); cached.textContent = t('cached'); entry.appendChild(cached); } entry.addEventListener('click', () => { if (item.graphId || item.graphUrl) openSavedGraph(item); else { input.value = item.name; setMode(item.mode); generateGraph(); } }); historyList.appendChild(entry); }); }
+    function saveHistory(record) { try { const normalized = record.name.trim(); const key = normalized.toLocaleLowerCase(); const items = getHistory().filter(item => item.name.toLocaleLowerCase() !== key); items.unshift({...record, name:normalized}); localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, HISTORY_LIMIT))); } catch (_) {} renderHistory(); }
+    function displayGraph(record, sourceUrl) { const stats = record.stats; const title = document.createElement('strong'); title.textContent = record.resolvedName || record.name; const detail = document.createElement('span'); detail.textContent = ` • ${stats.people} ${t('people')} • ${stats.relations} ${t('relations')} • ${record.source}`; summary.replaceChildren(title, detail); summary.style.display = 'block'; home.style.display = 'none'; backButton.classList.add('visible'); frame.classList.remove('loaded'); frame.src = sourceUrl; frame.style.display = 'block'; frame.onload = () => frame.classList.add('loaded'); progress.style.display = 'none'; }
+    async function openSavedGraph(record) { progress.classList.remove('error'); progress.style.display = 'block'; progressTitle.textContent = t('building'); log.replaceChildren(); setProgress(t('restoring')); try { const cached = record.graphId ? await readCachedGraph(record.graphId) : null; if (cached?.html) { const base = `${location.origin}/static/output/`; const html = cached.html.replace(/<head([^>]*)>/i, `<head$1><base href="${base}">`); displayGraph(record, URL.createObjectURL(new Blob([html], {type:'text/html'}))); } else { displayGraph(record, record.graphUrl); setProgress(t('cacheUnavailable')); } } catch (_) { displayGraph(record, record.graphUrl); setProgress(t('cacheUnavailable')); } }
+    function returnToSearch() { frame.removeAttribute('src'); frame.classList.remove('loaded'); frame.style.display = 'none'; summary.style.display = 'none'; backButton.classList.remove('visible'); progress.style.display = 'none'; home.style.display = 'grid'; input.focus(); }
+    function addLog(message) { const item = document.createElement('div'); item.textContent = `${new Date().toLocaleTimeString(language === 'zh' ? 'zh-CN' : 'en-US', {hour12:false})}  ${message}`; log.appendChild(item); log.scrollTop = log.scrollHeight; }
     function setProgress(message) { status.textContent = message; addLog(message); }
-    function setError(message) { progress.classList.add('error'); progressTitle.textContent = '这次没有完成'; status.textContent = message; addLog(message); }
-    modes.forEach(mode => mode.addEventListener('change', () => { modeHint.textContent = activeMode() === 'deep' ? '扩展关键人物，耗时会更长' : '更快，适合先了解一个人'; }));
+    function setError(message) { progress.classList.add('error'); progressTitle.textContent = t('failed'); status.textContent = message; addLog(message); }
+    modes.forEach(mode => mode.addEventListener('change', updateModeHint));
     document.querySelectorAll('.example').forEach(item => item.addEventListener('click', () => { input.value = item.dataset.name; input.focus(); }));
-    input.addEventListener('keydown', event => { if (event.key === 'Enter') generateGraph(); }); button.addEventListener('click', generateGraph);
+    clearHistoryButton.addEventListener('click', () => { try { localStorage.removeItem(HISTORY_KEY); } catch (_) {} clearCachedGraphs().catch(() => {}); renderHistory(); });
+    document.querySelectorAll('.language-button').forEach(item => item.addEventListener('click', () => applyLanguage(item.dataset.language))); backButton.addEventListener('click', returnToSearch); input.addEventListener('keydown', event => { if (event.key === 'Enter') generateGraph(); }); button.addEventListener('click', generateGraph); applyLanguage(language, false);
     async function generateGraph() {
       const name = input.value.trim(); if (!name) { input.focus(); return; }
-      const mode = activeMode(); button.disabled = true; button.textContent = '探索中…'; progress.classList.remove('error'); progress.style.display = 'block'; progressTitle.textContent = '正在构建关系图'; log.replaceChildren(); summary.style.display = 'none'; frame.classList.remove('loaded'); frame.style.display = 'none'; home.style.display = 'grid'; setProgress(`准备检索 ${name}…`);
+      const mode = activeMode(), estimatedSeconds = mode === 'deep' ? 45 : 15; button.disabled = true; button.textContent = t('searching'); progress.classList.remove('error'); progress.style.display = 'block'; progressTitle.textContent = t('building'); log.replaceChildren(); summary.style.display = 'none'; frame.classList.remove('loaded'); frame.style.display = 'none'; home.style.display = 'grid'; setProgress(t('preparing', {name})); setProgress(t('waitEstimate', {seconds:estimatedSeconds}));
       try {
-        const response = await fetch('/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, mode})});
-        if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || '服务暂时无法响应。'); }
+        const response = await fetch('/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, mode, language})});
+        if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || t('unavailable')); }
         const reader = response.body.getReader(), decoder = new TextDecoder(); let buffer = '';
         while (true) {
           const {done, value} = await reader.read(); if (done) break; buffer += decoder.decode(value, {stream:true}); const lines = buffer.split('\n'); buffer = lines.pop();
           for (const line of lines) { if (!line.trim()) continue; const message = JSON.parse(line); if (message.type === 'log') setProgress(message.message); else if (message.type === 'error') throw new Error(message.message); else if (message.type === 'result') {
-            const stats = message.stats; summary.innerHTML = `<strong>${message.resolved_name}</strong><span class="dot">•</span>${stats.people} 人<span class="dot">•</span>${stats.relations} 条关系<span class="dot">•</span>${message.source}`; summary.style.display = 'block'; home.style.display = 'none'; frame.src = message.graph_url; frame.style.display = 'block'; frame.onload = () => frame.classList.add('loaded'); progress.style.display = 'none'; return;
+            const record = {name:message.resolved_name || name, resolvedName:message.resolved_name || name, mode, graphUrl:message.graph_url, stats:message.stats, source:message.source}; try { record.graphId = graphId(); await cacheGraph(record); } catch (_) { delete record.graphId; } saveHistory(record); displayGraph(record, message.graph_url); return;
           }}
         }
-      } catch (error) { setError(error.message || '出现未知错误。'); } finally { button.disabled = false; button.textContent = '开始探索'; }
+      } catch (error) { setError(error.message || t('unknown')); } finally { button.disabled = false; button.textContent = t('start'); }
     }
   </script>
 </body>
