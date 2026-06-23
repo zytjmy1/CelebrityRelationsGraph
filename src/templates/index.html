@@ -1,442 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celebrity Relations Graph</title>
-    <style>
-        :root {
-            --bg-color: #000000;
-            --surface-color: #1d1d1f;
-            --text-primary: #f5f5f7;
-            --text-secondary: #86868b;
-            --accent-color: #2997ff;
-            --border-color: #424245;
-            --glass-bg: rgba(29, 29, 31, 0.72);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        header {
-            padding: 20px 40px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            justify-content: space-between;
-        }
-
-        h1 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 20px;
-            letter-spacing: -0.01em;
-            color: var(--text-primary);
-        }
-
-        .search-area {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 4px;
-            background: var(--surface-color);
-            padding: 3px;
-            border-radius: 8px;
-        }
-
-        .radio-option {
-            position: relative;
-        }
-
-        .radio-option input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
-        .radio-option label {
-            display: block;
-            padding: 6px 12px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 6px;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-
-        .radio-option input:checked~label {
-            background-color: #636366;
-            color: white;
-        }
-
-        .input-group {
-            position: relative;
-        }
-
-        input[type="text"] {
-            padding: 10px 16px;
-            border-radius: 12px;
-            border: 1px solid transparent;
-            background-color: var(--surface-color);
-            color: var(--text-primary);
-            font-size: 14px;
-            width: 280px;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        input[type="text"]:focus {
-            background-color: #2c2c2e;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 4px rgba(41, 151, 255, 0.15);
-        }
-
-        input[type="text"]::placeholder {
-            color: var(--text-secondary);
-        }
-
-        button.primary-btn {
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: none;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        button.primary-btn:hover {
-            background-color: #0077ed;
-            transform: scale(1.02);
-        }
-
-        button.primary-btn:active {
-            transform: scale(0.98);
-        }
-
-        button.primary-btn:disabled {
-            background-color: #3a3a3c;
-            color: #636366;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        #graph-container {
-            margin-top: 80px;
-            /* Adjust for fixed header */
-            flex-grow: 1;
-            position: relative;
-            background-color: var(--bg-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        iframe.loaded {
-            opacity: 1;
-        }
-
-        .placeholder {
-            position: absolute;
-            text-align: center;
-            color: var(--text-secondary);
-            z-index: 10;
-        }
-
-        .placeholder h2 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .placeholder p {
-            font-size: 16px;
-            margin: 0;
-        }
-
-        .loader {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--accent-color);
-            animation: spin 1s linear infinite;
-            margin: 0 auto 24px;
-            display: none;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .log-console {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 700px;
-            background: rgba(29, 29, 31, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            color: #00ff41;
-            /* Classic terminal green */
-            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            height: 160px;
-            overflow-y: auto;
-            display: none;
-            z-index: 50;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Scrollbar styling for log console */
-        .log-console::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .log-console::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .log-console::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-
-        .log-entry {
-            animation: fadeIn 0.2s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(2px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .error-state {
-            color: #ff453a;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>名人关系图谱</title>
+  <style>
+    :root { --ink:#eaf2ff; --muted:#9baac2; --line:rgba(148,163,184,.18); --panel:rgba(10,25,45,.72); --accent:#61d5ba; --gold:#fbbf24; --danger:#fb7185; }
+    * { box-sizing:border-box; }
+    body { min-width:320px; min-height:100vh; margin:0; color:var(--ink); font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif; background:#06101e; overflow:hidden; }
+    body::before, body::after { content:""; position:fixed; z-index:-1; border-radius:50%; filter:blur(20px); pointer-events:none; }
+    body::before { width:55vw; height:55vw; background:radial-gradient(circle,rgba(14,116,144,.24),transparent 68%); top:-28vw; right:-12vw; }
+    body::after { width:48vw; height:48vw; background:radial-gradient(circle,rgba(109,40,217,.15),transparent 70%); bottom:-30vw; left:-13vw; }
+    .app { height:100vh; display:grid; grid-template-rows:auto 1fr; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:18px clamp(20px,4vw,58px); border-bottom:1px solid var(--line); background:rgba(6,16,30,.62); backdrop-filter:blur(18px); }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:720; letter-spacing:-.03em; white-space:nowrap; }
+    .brand-mark { display:grid; place-items:center; width:31px; height:31px; color:#081321; font-size:19px; border-radius:10px; background:linear-gradient(145deg,#fcd34d,#5eead4); box-shadow:0 0 26px rgba(94,234,212,.24); }
+    .brand small { display:block; margin-top:2px; color:var(--muted); font-size:11px; font-weight:500; letter-spacing:.08em; }
+    .legend { display:flex; gap:18px; color:var(--muted); font-size:12px; }
+    .legend span { display:flex; align-items:center; gap:7px; } .legend i { width:8px; height:8px; border-radius:50%; } .legend .core { background:var(--gold); } .legend .person { background:#60a5fa; }
+    main { position:relative; min-height:0; }
+    #graph-frame { width:100%; height:100%; display:none; border:0; opacity:0; transition:opacity .45s ease; } #graph-frame.loaded { opacity:1; }
+    .home { position:absolute; inset:0; display:grid; place-items:center; padding:30px; overflow:auto; }
+    .home-content { width:min(760px,100%); padding:clamp(25px,5vw,54px); border:1px solid var(--line); border-radius:28px; background:linear-gradient(145deg,rgba(18,39,67,.78),rgba(8,21,39,.83)); box-shadow:0 30px 80px rgba(0,0,0,.25); }
+    .eyebrow { margin:0 0 13px; color:var(--accent); font-size:12px; font-weight:750; letter-spacing:.15em; text-transform:uppercase; }
+    h1 { max-width:630px; margin:0; font-size:clamp(34px,5vw,60px); line-height:1.1; letter-spacing:-.055em; } h1 em { color:#a7f3d0; font-style:normal; }
+    .intro { max-width:560px; margin:18px 0 31px; color:var(--muted); font-size:15px; line-height:1.75; }
+    .search-card { padding:8px; border:1px solid rgba(125,211,252,.17); border-radius:18px; background:rgba(3,12,24,.56); box-shadow:inset 0 1px rgba(255,255,255,.035); }
+    .search-row { display:flex; gap:9px; } input[type=text] { flex:1; min-width:0; padding:15px 16px; border:0; border-radius:12px; color:var(--ink); outline:none; background:transparent; font:inherit; font-size:16px; } input::placeholder { color:#71829e; }
+    input:focus-visible { box-shadow:0 0 0 2px var(--accent); } button { font:inherit; } .primary { min-width:104px; padding:0 18px; border:0; border-radius:12px; color:#062118; background:var(--accent); font-weight:750; cursor:pointer; transition:transform .18s,filter .18s; } .primary:hover { filter:brightness(1.07); transform:translateY(-1px); } .primary:disabled { cursor:wait; filter:saturate(.25); transform:none; }
+    .options { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-top:17px; }
+    .mode-group { display:flex; gap:7px; } .mode input { position:absolute; opacity:0; pointer-events:none; } .mode label { display:block; padding:8px 12px; border:1px solid transparent; border-radius:9px; color:var(--muted); font-size:13px; cursor:pointer; } .mode input:checked + label { border-color:rgba(97,213,186,.31); color:#d7fff5; background:rgba(97,213,186,.12); }
+    .mode-hint { color:#71829e; font-size:12px; }
+    .examples { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:25px; color:var(--muted); font-size:12px; } .example { padding:6px 10px; border:1px solid var(--line); border-radius:999px; color:#bfcee5; background:transparent; cursor:pointer; transition:border-color .15s,color .15s; } .example:hover { border-color:var(--accent); color:#e9fffa; }
+    .progress { position:absolute; z-index:3; right:clamp(16px,3vw,38px); bottom:clamp(16px,3vw,38px); width:min(390px,calc(100% - 32px)); padding:17px; border:1px solid var(--line); border-radius:16px; background:rgba(7,18,33,.84); backdrop-filter:blur(16px); display:none; box-shadow:0 18px 50px rgba(0,0,0,.28); }
+    .progress-top { display:flex; justify-content:space-between; gap:10px; align-items:center; } .progress h2 { margin:0; font-size:14px; } .pulse { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 0 rgba(97,213,186,.45); animation:pulse 1.5s infinite; } @keyframes pulse { 70% { box-shadow:0 0 0 8px rgba(97,213,186,0); } 100% { box-shadow:0 0 0 0 rgba(97,213,186,0); } }
+    #status { margin:8px 0 11px; color:#b9c8de; font-size:12px; line-height:1.45; } #log { max-height:94px; overflow:auto; color:#6f819e; font:11px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace; } #log div:last-child { color:#cbd9ed; }
+    .summary { position:absolute; z-index:2; top:22px; left:clamp(16px,3vw,38px); display:none; padding:10px 13px; border:1px solid var(--line); border-radius:12px; color:#afc0d8; background:rgba(7,18,33,.82); backdrop-filter:blur(12px); font-size:12px; } .summary strong { color:#f8fafc; } .summary .dot { color:var(--accent); padding:0 6px; }
+    .error { color:var(--danger)!important; } .error .pulse { background:var(--danger); animation:none; }
+    @media (max-width:650px) { header { padding:14px 18px; } .legend { display:none; } .home { padding:16px; align-items:start; } .home-content { margin-top:24px; padding:29px 22px; border-radius:22px; } .search-row { flex-direction:column; } .primary { min-height:48px; } .options { align-items:flex-start; flex-direction:column; } .progress { bottom:16px; } }
+  </style>
 </head>
-
 <body>
+  <div class="app">
     <header>
-        <div class="header-content">
-            <h1>Celebrity Relations Graph</h1>
-            <div class="search-area">
-                <div class="controls">
-                    <div class="radio-option">
-                        <input type="radio" id="mode-fast" name="mode" value="fast" checked>
-                        <label for="mode-fast">Fast</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="mode-deep" name="mode" value="deep">
-                        <label for="mode-deep">Deep</label>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="celebrity-name" placeholder="Search celebrity..."
-                        onkeypress="handleKeyPress(event)">
-                </div>
-                <button onclick="generateGraph()" id="generate-btn" class="primary-btn">Generate</button>
-            </div>
-        </div>
+      <div class="brand"><span class="brand-mark">✦</span><span>名人关系图谱<small>CELEBRITY RELATION MAP</small></span></div>
+      <div class="legend"><span><i class="core"></i>核心人物</span><span><i class="person"></i>关联人物</span></div>
     </header>
-
-    <div id="graph-container">
-        <div class="placeholder" id="placeholder">
-            <div class="loader" id="loader"></div>
-            <h2 id="status-title">Ready when you are</h2>
-            <p id="status-desc" style="color: var(--text-secondary);">Enter a celebrity name to discover their network.
-            </p>
+    <main>
+      <iframe id="graph-frame" title="人物关系图"></iframe>
+      <div class="summary" id="summary"></div>
+      <section class="home" id="home">
+        <div class="home-content">
+          <p class="eyebrow">Public profile explorer</p>
+          <h1>把人物故事，<br>变成一张<em>关系地图</em>。</h1>
+          <p class="intro">从公开人物资料中提取可验证的家庭、合作与职业关系。快速模式适合单一人物，深度模式会进一步探索关键关联人物。</p>
+          <div class="search-card">
+            <div class="search-row">
+              <input type="text" id="celebrity-name" aria-label="人物姓名" autocomplete="off" placeholder="输入人物姓名，例如：周杰伦">
+              <button class="primary" id="generate-btn" type="button">开始探索</button>
+            </div>
+          </div>
+          <div class="options">
+            <div class="mode-group" role="radiogroup" aria-label="搜索范围">
+              <div class="mode"><input type="radio" id="mode-fast" name="mode" value="fast" checked><label for="mode-fast">快速 · 单层</label></div>
+              <div class="mode"><input type="radio" id="mode-deep" name="mode" value="deep"><label for="mode-deep">深度 · 两层</label></div>
+            </div>
+            <span class="mode-hint" id="mode-hint">更快，适合先了解一个人</span>
+          </div>
+          <div class="examples"><span>试试</span><button class="example" type="button" data-name="周杰伦">周杰伦</button><button class="example" type="button" data-name="Taylor Swift">Taylor Swift</button><button class="example" type="button" data-name="Elon Musk">Elon Musk</button></div>
         </div>
-        <iframe id="graph-frame" src=""></iframe>
-        <div class="log-console" id="log-console"></div>
-    </div>
-
-    <script>
-        const input = document.getElementById('celebrity-name');
-        const btn = document.getElementById('generate-btn');
-        const loader = document.getElementById('loader');
-        const statusTitle = document.getElementById('status-title');
-        const statusDesc = document.getElementById('status-desc');
-        const iframe = document.getElementById('graph-frame');
-        const placeholder = document.getElementById('placeholder');
-        const logConsole = document.getElementById('log-console');
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                generateGraph();
-            }
+      </section>
+      <aside class="progress" id="progress" aria-live="polite"><div class="progress-top"><h2 id="progress-title">正在构建关系图</h2><span class="pulse"></span></div><p id="status">准备开始…</p><div id="log"></div></aside>
+    </main>
+  </div>
+  <script>
+    const input = document.getElementById('celebrity-name'), button = document.getElementById('generate-btn'), home = document.getElementById('home'), frame = document.getElementById('graph-frame'), progress = document.getElementById('progress'), status = document.getElementById('status'), log = document.getElementById('log'), summary = document.getElementById('summary'), progressTitle = document.getElementById('progress-title'), modeHint = document.getElementById('mode-hint');
+    const modes = document.querySelectorAll('input[name="mode"]');
+    function activeMode() { return document.querySelector('input[name="mode"]:checked').value; }
+    function addLog(message) { const item = document.createElement('div'); item.textContent = `${new Date().toLocaleTimeString('zh-CN', {hour12:false})}  ${message}`; log.appendChild(item); log.scrollTop = log.scrollHeight; }
+    function setProgress(message) { status.textContent = message; addLog(message); }
+    function setError(message) { progress.classList.add('error'); progressTitle.textContent = '这次没有完成'; status.textContent = message; addLog(message); }
+    modes.forEach(mode => mode.addEventListener('change', () => { modeHint.textContent = activeMode() === 'deep' ? '扩展关键人物，耗时会更长' : '更快，适合先了解一个人'; }));
+    document.querySelectorAll('.example').forEach(item => item.addEventListener('click', () => { input.value = item.dataset.name; input.focus(); }));
+    input.addEventListener('keydown', event => { if (event.key === 'Enter') generateGraph(); }); button.addEventListener('click', generateGraph);
+    async function generateGraph() {
+      const name = input.value.trim(); if (!name) { input.focus(); return; }
+      const mode = activeMode(); button.disabled = true; button.textContent = '探索中…'; progress.classList.remove('error'); progress.style.display = 'block'; progressTitle.textContent = '正在构建关系图'; log.replaceChildren(); summary.style.display = 'none'; frame.classList.remove('loaded'); frame.style.display = 'none'; home.style.display = 'grid'; setProgress(`准备检索 ${name}…`);
+      try {
+        const response = await fetch('/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, mode})});
+        if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.error || '服务暂时无法响应。'); }
+        const reader = response.body.getReader(), decoder = new TextDecoder(); let buffer = '';
+        while (true) {
+          const {done, value} = await reader.read(); if (done) break; buffer += decoder.decode(value, {stream:true}); const lines = buffer.split('\n'); buffer = lines.pop();
+          for (const line of lines) { if (!line.trim()) continue; const message = JSON.parse(line); if (message.type === 'log') setProgress(message.message); else if (message.type === 'error') throw new Error(message.message); else if (message.type === 'result') {
+            const stats = message.stats; summary.innerHTML = `<strong>${message.resolved_name}</strong><span class="dot">•</span>${stats.people} 人<span class="dot">•</span>${stats.relations} 条关系<span class="dot">•</span>${message.source}`; summary.style.display = 'block'; home.style.display = 'none'; frame.src = message.graph_url; frame.style.display = 'block'; frame.onload = () => frame.classList.add('loaded'); progress.style.display = 'none'; return;
+          }}
         }
-
-        function appendLog(message) {
-            const div = document.createElement('div');
-            div.className = 'log-entry';
-            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-            div.innerText = `[${time}] ${message}`;
-            logConsole.appendChild(div);
-            // Auto scroll to bottom
-            logConsole.scrollTop = logConsole.scrollHeight;
-        }
-
-        async function generateGraph() {
-            const name = input.value.trim();
-            if (!name) return;
-
-            const mode = document.querySelector('input[name="mode"]:checked').value;
-
-            // Reset UI State
-            iframe.classList.remove('loaded');
-            setTimeout(() => { iframe.style.display = 'none'; iframe.src = ""; }, 300);
-
-            placeholder.style.display = 'block';
-            loader.style.display = 'block';
-            statusTitle.innerText = "Processing...";
-            statusDesc.innerText = `Analyzing network for ${name} (${mode} mode)`;
-            statusDesc.style.color = "var(--text-secondary)";
-
-            // Show Logs
-            logConsole.style.display = 'block';
-            logConsole.innerHTML = '';
-            appendLog(`System initializing... Mode: ${mode.toUpperCase()}`);
-            appendLog(`Target: ${name}`);
-
-            btn.disabled = true;
-
-            try {
-                const response = await fetch('/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: name, mode: mode })
-                });
-
-                if (!response.ok) {
-                    let errorText = await response.text();
-                    try {
-                        const errJson = JSON.parse(errorText);
-                        throw new Error(errJson.message || errJson.error || `Server Error: ${response.status}`);
-                    } catch (e) {
-                        throw new Error(`Server Error (${response.status}): ${errorText.substring(0, 50)}...`);
-                    }
-                }
-
-                // Stream handling
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop();
-
-                    for (const line of lines) {
-                        if (!line.trim()) continue;
-                        try {
-                            const msg = JSON.parse(line);
-                            if (msg.type === 'log') {
-                                appendLog(msg.message);
-                                statusDesc.innerText = msg.message;
-                            } else if (msg.type === 'result') {
-                                // Success
-                                statusTitle.innerText = "Completed";
-                                statusDesc.innerText = "Rendering graph...";
-                                loader.style.display = 'none';
-
-                                // Hide placeholder and logs after a moment to show graph
-                                setTimeout(() => {
-                                    placeholder.style.display = 'none';
-                                    logConsole.style.display = 'none';
-                                    iframe.style.display = 'block';
-                                    iframe.src = msg.graph_url;
-                                    // Fade in
-                                    iframe.onload = () => iframe.classList.add('loaded');
-                                }, 1000);
-                                return;
-                            } else if (msg.type === 'error') {
-                                throw new Error(msg.message);
-                            }
-                        } catch (e) {
-                            console.error("Parse error:", e);
-                        }
-                    }
-                }
-
-            } catch (error) {
-                loader.style.display = 'none';
-                statusTitle.innerText = "Error";
-                statusTitle.classList.add('error-state');
-                statusDesc.innerText = error.message;
-                statusDesc.classList.add('error-state');
-                appendLog(`CRITICAL ERROR: ${error.message}`);
-            } finally {
-                btn.disabled = false;
-            }
-        }
-    </script>
+      } catch (error) { setError(error.message || '出现未知错误。'); } finally { button.disabled = false; button.textContent = '开始探索'; }
+    }
+  </script>
 </body>
-
 </html>
